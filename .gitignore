@@ -38,8 +38,8 @@ logs/
 # Environment variables
 .env
 
-# Browser data
-browser-use/
+# Project specific folders
+organized/
 
 # Personal or sensitive data
 *config.ini
