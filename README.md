@@ -1,6 +1,10 @@
 # Testify
 This project provides an automated browser testing solution that uses AI to generate and execute tests for web applications.
 
+## Demo
+
+![Browser Automation Demo](agent_history.gif)
+
 ## Features
 
 - Automated browser testing with Playwright
