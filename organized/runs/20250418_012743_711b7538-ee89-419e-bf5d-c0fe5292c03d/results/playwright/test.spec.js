@@ -1,0 +1,18 @@
+// Playwright test script
+const { test, expect } = require('@playwright/test');
+
+test('go to https://www.saucedemo.com', async ({ page }) => {
+  // Set timeout for entire test
+  test.setTimeout(30000);
+
+  // Step 2: Navigate to URL
+  await page.goto('https://www.saucedemo.com');
+  console.log('Navigated to https://www.saucedemo.com');
+  await page.waitForLoadState('networkidle');
+
+  // Final step: Task completion
+  console.log('Task completed successfully');
+
+  // Take screenshot at the end
+  await page.screenshot({ path: 'final-state.png' });
+});

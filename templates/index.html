@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Testify - The AI QA Automation Tool</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/aurora.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/card-spotlight.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/grid-background.css') }}">
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 20px;
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        /* Base Button Style */
+        .btn {
+            display: inline-block; /* Use inline-block for consistent sizing */
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 16px; /* Ensure consistent font size */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-sizing: border-box; /* Crucial for consistent sizing */
+            width: 180px; /* Define explicit width */
+            height: 48px; /* Define explicit height */
+            line-height: 24px; /* Vertically center text (height - 2*padding_vertical) */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.5);
+            /* vertical-align removed as align-items: center on container handles it */
+        }
+        
+        /* Spinner instead of progress bar */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 10px auto;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Detailed Analysis Panels */
+        .analysis-panels-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .analysis-container {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            margin: 5px 0;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            max-width: 100%;
+            width: 100%;
+            display: block;
+        }
+        
+        .analysis-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 1.0);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .analysis-icon {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        
+        .analysis-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+            white-space: pre-wrap;
+            word-break: break-word;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .state-analysis-panel {
+            border-left: 3px solid #64B5F6; /* Light blue */
+            background: linear-gradient(90deg, rgba(100, 181, 246, 0.2), rgba(0, 0, 0, 0.6));
+        }
+        
+        .eval-panel {
+            border-left: 3px solid #81C784; /* Light green */
+            background: linear-gradient(90deg, rgba(129, 199, 132, 0.2), rgba(0, 0, 0, 0.6));
+        }
+        
+        .memory-panel {
+            border-left: 3px solid #FFD54F; /* Light amber */
+            background: linear-gradient(90deg, rgba(255, 213, 79, 0.2), rgba(0, 0, 0, 0.6));
+        }
+        
+        .goal-panel {
+            border-left: 3px solid #E57373; /* Light red */
+            background: linear-gradient(90deg, rgba(229, 115, 115, 0.2), rgba(0, 0, 0, 0.6));
+        }
+        
+        .json-content {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .download-btn {
+            /* Only specify differences */
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.2), rgba(0, 0, 0, 0.5));
+            border-color: rgba(0, 123, 255, 0.3);
+        }
+        
+        .playwright-btn {
+            /* Only specify differences */
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(0, 0, 0, 0.5));
+            border-color: rgba(138, 43, 226, 0.3);
+        }
+        
+        .report-btn {
+            /* Enhanced visual style for report button to make it stand out more */
+            background: linear-gradient(135deg, rgba(255, 64, 129, 0.3), rgba(0, 0, 0, 0.6));
+            border-color: rgba(255, 64, 129, 0.5);
+            width: 200px; /* Make it slightly wider */
+            font-weight: 600; /* Make text a bit bolder */
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .report-btn:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0) 0%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                rgba(255, 255, 255, 0) 100%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .report-btn:hover:after {
+            transform: translateX(100%);
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.3), rgba(0, 0, 0, 0.6));
+            border-color: rgba(0, 123, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .playwright-btn:hover {
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(0, 0, 0, 0.6));
+            border-color: rgba(138, 43, 226, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .report-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 64, 129, 0.4), rgba(0, 0, 0, 0.7));
+            border-color: rgba(255, 64, 129, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gherkin-btn {
+            /* Only specify differences */
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(0, 0, 0, 0.5));
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+        
+        .gherkin-btn:hover {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(0, 0, 0, 0.6));
+            border-color: rgba(76, 175, 80, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .selenium-btn {
+            /* Only specify differences */
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(0, 0, 0, 0.5));
+            border-color: rgba(255, 152, 0, 0.3);
+        }
+        
+        .selenium-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.3), rgba(0, 0, 0, 0.6));
+            border-color: rgba(255, 152, 0, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:active { /* Apply active state to base class */
+            transform: translateY(0);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 0.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Aurora background container -->
+    <div class="aurora-container">
+        <div class="aurora-background radial-mask"></div>
+    </div>
+    
+    <div class="container">
+        <div class="logo">TESTIFY</div>
+        <div class="search-container ">
+            <!-- Spotlight effect elements -->
+            <div class=" ">
+                <div class="spotlight-background"></div>
+                <div class="dots-overlay"></div>
+            </div>
+            
+            <!-- Card content -->
+            <div class="card-content">
+                <form id="task-form" method="post" class="search-form">
+                    <textarea id="task-input" name="task" placeholder="Describe your test task here..." rows="1"></textarea>
+                    <div class="button-wrapper">
+                <button type="submit" class="submit-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+                    </div>
+            </form>
+            <div style="max-width: 200px; margin: 0 auto;">
+                <button id="stop-button" class="stop-btn" style="display: none;">Stop Test</button>
+                </div>
+            </div>
+        </div>
+        <div class="results-container" id="results">
+            <div class="background-overlay grid-background"></div>
+            <!-- Results will appear here -->
+        </div>
+        <div class="button-container">
+            <a href="/generate-report" class="btn report-btn" id="report-btn" style="display: none;" target="_blank">View Report</a>
+            <a href="/download-gherkin" class="btn gherkin-btn" id="gherkin-btn" style="display: none;">Gherkin Feature</a>
+            <a href="/download-latest-playwright" class="btn playwright-btn" id="playwright-btn" style="display: none;">Playwright</a>
+            <a href="/download-selenium" class="btn selenium-btn" id="selenium-btn" style="display: none;">Selenium Test</a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/card-spotlight.js') }}"></script>
+    <script>
+        // Add this script to handle showing the buttons when test completes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to the buttons
+            const gherkinBtn = document.getElementById('gherkin-btn');
+            const playwrightBtn = document.getElementById('playwright-btn');
+            const seleniumBtn = document.getElementById('selenium-btn');
+            const reportBtn = document.getElementById('report-btn');
+            
+            // Listen for the completion event from the server
+            document.addEventListener('test-completed', function(event) {
+                // Make buttons visible
+                gherkinBtn.style.display = 'inline-block';
+                playwrightBtn.style.display = 'inline-block';
+                seleniumBtn.style.display = 'inline-block';
+                reportBtn.style.display = 'inline-block';
+                
+                // Update report button link to use the specific test ID
+                if (event.detail && event.detail.testId) {
+                    reportBtn.href = `/generate-playwright-report/${event.detail.testId}`;
+                }
+                
+                // Add a subtle animation to draw attention to the report button
+                reportBtn.classList.add('pulse-animation');
+                setTimeout(() => {
+                    reportBtn.classList.remove('pulse-animation');
+                }, 2000); // Stop pulsing after 2 seconds
+            });
+            
+            // Function to create analysis panels for detailed information
+            window.createAnalysisPanel = function(type, content) {
+                const panel = document.createElement('div');
+                panel.className = `analysis-container ${type}-panel`;
+                
+                const header = document.createElement('div');
+                header.className = 'analysis-header';
+                
+                const icon = document.createElement('span');
+                icon.className = 'analysis-icon';
+                
+                // Set icon based on type
+                switch(type) {
+                    case 'state-analysis':
+                        icon.textContent = '🔍';
+                        header.textContent = 'State Analysis';
+                        break;
+                    case 'eval': 
+                        icon.textContent = '👍';
+                        header.textContent = 'Evaluation';
+                        break;
+                    case 'memory':
+                        icon.textContent = '🧠';
+                        header.textContent = 'Memory Context';
+                        break;
+                    case 'goal':
+                        icon.textContent = '🎯';
+                        header.textContent = 'Next Action Plan';
+                        break;
+                }
+                
+                header.prepend(icon);
+                panel.appendChild(header);
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'analysis-content';
+                
+                // Handle JSON content
+                if (typeof content === 'object') {
+                    if (Object.keys(content).length === 0) {
+                        contentDiv.textContent = "No detailed information available.";
+                    } else {
+                        contentDiv.classList.add('json-content');
+                        
+                        // Format each property in a more readable way
+                        for (const [key, value] of Object.entries(content)) {
+                            if (!value) continue;
+                            
+                            const section = document.createElement('div');
+                            section.style.marginBottom = '10px';
+                            
+                            const title = document.createElement('strong');
+                            title.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ': ';
+                            section.appendChild(title);
+                            
+                            // Format arrays
+                            if (Array.isArray(value)) {
+                                const ul = document.createElement('ul');
+                                ul.style.margin = '5px 0 10px 0';
+                                ul.style.paddingLeft = '20px';
+                                
+                                value.forEach(item => {
+                                    const li = document.createElement('li');
+                                    li.textContent = item;
+                                    ul.appendChild(li);
+                                });
+                                
+                                section.appendChild(ul);
+                            } else {
+                                // Plain string
+                                const text = document.createTextNode(value);
+                                section.appendChild(text);
+                            }
+                            
+                            contentDiv.appendChild(section);
+                        }
+                    }
+                } else {
+                    contentDiv.textContent = content;
+                }
+                
+                panel.appendChild(contentDiv);
+                return panel;
+            }
+        });
+    </script>
+</body>
+</html> 

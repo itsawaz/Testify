@@ -1,0 +1,43 @@
+
+# Task Results
+
+## Summary
+- **Task**: Test Case 1: Register User 1. Launch browser 2. Navigate to url 'http://automationexercise.com' 3. Verify that home page is visible successfully 4. Click on 'Signup / Login' button 5. Verify 'New User Signup!' is visible 6. Enter name and email address 7. Click 'Signup' button 8. Verify that 'ENTER ACCOUNT INFORMATION' is visible 9. Fill details: Title, Name, Email, Password, Date of birth 10. Select checkbox 'Sign up for our newsletter!' 11. Select checkbox 'Receive special offers from our partners!' 12. Fill details: First name, Last name, Company, Address, Address2, Country, State, City, Zipcode, Mobile Number 13. Click 'Create Account button' 14. Verify that 'ACCOUNT CREATED!' is visible 15. Click 'Continue' button 16. Verify that 'Logged in as username' is visible 17. Click 'Delete Account' button 18. Verify that 'ACCOUNT DELETED!' is visible and click 'Continue' button
+- **Steps Completed**: 17
+- **Overall Status**: Success
+
+## Details
+- Step 1: Unknown - Failed
+- Step 2: a - Failed
+- Step 3: input - Failed
+- Step 4: input - Failed
+- Step 5: button - Failed
+- Step 6: input - Failed
+- Step 7: button - Failed
+- Step 8: input - Failed
+- Step 9: input - Failed
+- Step 10: select - Failed
+- Step 11: select - Failed
+- Step 12: select - Failed
+- Step 13: input - Failed
+- Step 14: input - Failed
+- Step 15: Unknown - Failed
+- Step 16: input - Failed
+- Step 17: input - Failed
+- Step 18: button - Failed
+- Step 19: Unknown - Failed
+- Step 20: input - Failed
+- Step 21: input - Failed
+- Step 22: input - Failed
+- Step 23: input - Failed
+- Step 24: input - Failed
+- Step 25: select - Failed
+- Step 26: input - Failed
+- Step 27: input - Failed
+- Step 28: a - Failed
+- Step 29: Unknown - Failed
+- Step 30: button - Failed
+- Step 31: a - Failed
+- Step 32: a - Failed
+- Step 33: a - Failed
+- Step 34: Unknown - Failed

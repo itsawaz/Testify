@@ -1,0 +1,578 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Playwright Test Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary-color: #8a2be2;  /* Purple for Playwright */
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --info-color: #2196f3;
+            --warning-color: #ff9800;
+            --background-color: #f8f9fa;
+            --card-background: white;
+            --text-color: #333;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(to right, #7928ca, #ff0080);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+        
+        header p {
+            margin: 10px 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .summary-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .summary-info {
+            flex: 1;
+        }
+        
+        .summary-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 6px;
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .test-container {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .test-title {
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .test-title .badge {
+            margin-left: 15px;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: normal;
+        }
+        
+        .success-badge {
+            background-color: rgba(76, 175, 80, 0.15);
+            color: var(--success-color);
+        }
+        
+        .failed-badge {
+            background-color: rgba(244, 67, 54, 0.15);
+            color: var(--error-color);
+        }
+        
+        .step-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .step {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 45px;
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .step::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            text-align: center;
+            line-height: 20px;
+            font-weight: bold;
+        }
+        
+        .step.success {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success-color);
+            border-left: 3px solid var(--success-color);
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
+        }
+        
+        .step.success::before {
+            content: '✓';
+            background-color: var(--success-color);
+        }
+        
+        .step.error {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: var(--error-color);
+            border-left: 3px solid var(--error-color);
+            box-shadow: 0 2px 4px rgba(244, 67, 54, 0.1);
+        }
+        
+        .step.error::before {
+            content: '✕';
+            background-color: var(--error-color);
+        }
+        
+        .step.neutral {
+            background-color: rgba(33, 150, 243, 0.1);
+            color: var(--info-color);
+            border-left: 3px solid var(--info-color);
+            box-shadow: 0 2px 4px rgba(33, 150, 243, 0.1);
+        }
+        
+        .step.neutral::before {
+            content: 'i';
+            background-color: var(--info-color);
+        }
+        
+        .step.warning {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--warning-color);
+            border-left: 3px solid var(--warning-color);
+            box-shadow: 0 2px 4px rgba(255, 152, 0, 0.1);
+        }
+        
+        .step.warning::before {
+            content: '!';
+            background-color: var(--warning-color);
+        }
+        
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .step-timestamp {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        
+        .step-content {
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .step-details {
+            margin-top: 5px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 4px;
+            color: #555;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .screenshot {
+            max-width: 100%;
+            height: auto;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #1a1a1a;
+                --card-background: #2a2a2a;
+                --text-color: #eee;
+                --success-color: #81c784;
+                --error-color: #e57373;
+                --info-color: #64b5f6;
+            }
+            
+            .step-details {
+                background-color: rgba(0, 0, 0, 0.2);
+                color: #ddd;
+            }
+            
+            .stat-item {
+                background-color: rgba(255, 255, 255, 0.03);
+            }
+            
+            .step-timestamp {
+                color: #aaa;
+            }
+            
+            .screenshot {
+                border-color: #444;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>TESTED Playwright Report</h1>
+            <p>Task: -> go to https://www.saucedemo.com/
+-> login and buy the most expensive item 
+-> validate the price of the items before and after purcahse 
+-> logout</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="summary-card">
+            <div class="summary-info">
+                <h2>Test Summary</h2>
+                <p>Test ID: ba6e4af9-6e59-4ab6-b3cf-292eb77e32fc</p>
+                <p>Run ID: Not available</p>
+                <p>Started: 2025-04-26 18:07:55</p>
+            </div>
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <div class="stat-value">20</div>
+                    <div class="stat-label">Steps</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">Passed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">✅</div>
+                    <div class="stat-label">Status</div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        <div class="test-container">
+            <h2 class="test-title">
+                Test Execution
+                <span class="badge success-badge">
+                    Passed
+                </span>
+            </h2>
+            
+            <ul class="step-list">
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 1: Initializing test agent</div>
+                        <div class="step-timestamp">18:07:55</div>
+                    </div>
+                    <div class="step-content">
+                        Setting up browser automation
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 2: Enter username on Saucedemo login page</div>
+                        <div class="step-timestamp">18:07:57</div>
+                    </div>
+                    <div class="step-content">
+                        🔗  Navigated to https://www.saucedemo.com/
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 3: Validate cart total matches selected item price</div>
+                        <div class="step-timestamp">18:08:16</div>
+                    </div>
+                    <div class="step-content">
+                        ⌨️  Input standard_user into index 1
+⌨️  Input secret_sauce into index 2
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 4: Validate price of selected item pre-purchase</div>
+                        <div class="step-timestamp">18:08:30</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 3: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 5: Click "Add to Cart" for priciest item</div>
+                        <div class="step-timestamp">18:08:39</div>
+                    </div>
+                    <div class="step-content">
+                        selected option Price (high to low) with value ['hilo']
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 6: Validate item price matches pre-purchase total</div>
+                        <div class="step-timestamp">18:08:52</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 8: Add to cart
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 7: Select the most expensive item for purchase.</div>
+                        <div class="step-timestamp">18:09:08</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 2: 1
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 8: Validate price of items in cart.</div>
+                        <div class="step-timestamp">18:09:24</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 7: Checkout
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 9: Verify cart total matches most expensive item p...</div>
+                        <div class="step-timestamp">18:09:36</div>
+                    </div>
+                    <div class="step-content">
+                        ⌨️  Input John into index 3
+⌨️  Input Doe into index 4
+⌨️  Input 12345 into index 5
+🖱️  Clicked button with index 7: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 10: Validate price of most expensive item</div>
+                        <div class="step-timestamp">18:09:55</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 6: Finish
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 11: Select most expensive item from inventory list</div>
+                        <div class="step-timestamp">18:10:06</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 0: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 12: Validate item price displayed on checkout page</div>
+                        <div class="step-timestamp">18:10:17</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 0: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 13: Verify cart matches most expensive item selection</div>
+                        <div class="step-timestamp">18:10:37</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 0: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 14: Validate Cart Item Prices Pre-Checkout</div>
+                        <div class="step-timestamp">18:10:46</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 0: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 15: Verify item price on checkout overview page</div>
+                        <div class="step-timestamp">18:11:06</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 0: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 16: Validate most expensive item's price in cart</div>
+                        <div class="step-timestamp">18:11:25</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 0: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 17: Click Add to Cart for Most Expensive Item</div>
+                        <div class="step-timestamp">18:11:44</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 0: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 18: Validate item price before checkout</div>
+                        <div class="step-timestamp">18:12:06</div>
+                    </div>
+                    <div class="step-content">
+                        
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 19: Click 'Continue' Button on Checkout Overview Page</div>
+                        <div class="step-timestamp">18:12:25</div>
+                    </div>
+                    <div class="step-content">
+                        🖱️  Clicked button with index 0: 
+                        
+                    </div>
+                </li>
+
+                <li class="step success">
+                    <div class="step-header">
+                        <div class="step-title">Step 20: Validate item price on checkout page</div>
+                        <div class="step-timestamp">18:12:52</div>
+                    </div>
+                    <div class="step-content">
+                        Ultimate task completed successfully. Navigated to https://www.saucedemo.com/, logged in as 'standard_user', purchased the most expensive item (Sauce Labs Fleece Jacket for $49.99, total $53.99 after tax), validated prices throughout, and securely logged out, returning to the login screen.
+                        
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+        
+        <footer>
+            <p>Generated by TESTED - Powered by Playwright</p>
+            <p>Report generated on 2025-04-26 18:13:14</p>
+        </footer>
+    </div>
+</body>
+</html>

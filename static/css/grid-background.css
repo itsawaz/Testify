@@ -1,0 +1,100 @@
+/* Grid and Dot Background Effects */
+
+.grid-background {
+  --grid-size: 30px;
+  --grid-strength: 1px;
+  --grid-color: rgba(255, 255, 255, 0.15);
+  
+  background-color: rgba(4, 6, 22, 0.65) !important;
+  background-image: linear-gradient(
+      to right,
+      var(--grid-color) var(--grid-strength),
+      transparent var(--grid-strength)
+    ),
+    linear-gradient(
+      to bottom,
+      var(--grid-color) var(--grid-strength),
+      transparent var(--grid-strength)
+    );
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: center center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.grid-background-small {
+  --grid-size: 15px;
+  --grid-strength: 1px;
+  --grid-color: rgba(255, 255, 255, 0.07);
+  
+  background-color: rgba(4, 6, 22, 0.5) !important;
+  background-image: linear-gradient(
+      to right,
+      var(--grid-color) var(--grid-strength),
+      transparent var(--grid-strength)
+    ),
+    linear-gradient(
+      to bottom,
+      var(--grid-color) var(--grid-strength),
+      transparent var(--grid-strength)
+    );
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: center center;
+  position: relative;
+}
+
+.dot-background {
+  --dot-size: 1px;
+  --dot-space: 20px;
+  --dot-color: rgba(255, 255, 255, 0.15);
+  
+  background-color: rgba(4, 6, 22, 0.5) !important;
+  background-image: radial-gradient(
+    var(--dot-color) var(--dot-size),
+    transparent var(--dot-size)
+  );
+  background-size: var(--dot-space) var(--dot-space);
+  background-position: center center;
+  position: relative;
+}
+
+/* Animated overlay for grid or dot background */
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 15px;
+}
+
+/* Make test containers more stylish with the grid background */
+.results-container .test-container {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.results-container .test-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.12);
+} 
