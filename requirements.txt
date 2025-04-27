@@ -1,0 +1,12 @@
+flask==2.2.3
+loguru==0.7.2
+langchain-openai==0.0.2
+openai==1.12.0
+python-dotenv==1.0.0
+asyncio==3.4.3
+uuid==1.30
+pillow==10.0.0
+playwright==1.40.0
+selenium==4.15.2
+jinja2==3.1.2
+werkzeug==2.2.3 
